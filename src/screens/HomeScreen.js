@@ -8,6 +8,7 @@ import {
 } from 'react-native';
 import React, {useState, useEffect} from 'react';
 import firestore from '@react-native-firebase/firestore';
+import {useIsFocused} from '@react-navigation/native';
 const HomeScreen = ({user, navigation}) => {
   const [chats, setChats] = useState(null);
   const getAllActiveChats = async () => {
@@ -19,11 +20,16 @@ const HomeScreen = ({user, navigation}) => {
     setChats(allUsers);
   };
 
+  const isFocused = useIsFocused();
+
   useEffect(() => {
-    getAllActiveChats();
-  }, []);
+    if (isFocused) {
+      getAllActiveChats();
+    }
+  }, [isFocused]);
 
   const RenderCard = ({item}) => {
+    console.log(item.email.length, 'email');
     return (
       <TouchableOpacity
         onPress={() =>
@@ -31,6 +37,8 @@ const HomeScreen = ({user, navigation}) => {
             name: item.name,
             uid: item.uid,
             status: 'Hello',
+            avatar: item.pic,
+            isGroupChat: item.email.length > 1 ? true : false,
             //   typeof item.status == 'string'
             //     ? item.status
             //     : item.status.toDate().toString(),
@@ -56,6 +64,7 @@ const HomeScreen = ({user, navigation}) => {
         keyExtractor={item => item.uid}
       />
       <TouchableOpacity
+        onPress={() => navigation.navigate('GroupChat')}
         style={{
           alignItems: 'flex-end',
           flex: 1,

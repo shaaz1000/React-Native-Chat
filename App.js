@@ -7,6 +7,7 @@ import LoginScreen from './src/screens/LoginScreen';
 import HomeScreen from './src/screens/HomeScreen';
 import ChatScreen from './src/screens/ChatScreen';
 import {Text, TouchableOpacity, View} from 'react-native';
+import GroupChatScreen from './src/screens/GroupChatScreen';
 
 const Stack = createStackNavigator();
 const App = () => {
@@ -50,6 +51,9 @@ const App = () => {
                 ),
               })}>
               {props => <ChatScreen {...props} user={user} />}
+            </Stack.Screen>
+            <Stack.Screen name="GroupChat">
+              {props => <GroupChatScreen {...props} user={user} />}
             </Stack.Screen>
           </>
         ) : (

@@ -40,14 +40,12 @@ export default function SignUpScreen({navigation}) {
         .doc(result.user.uid)
         .set({
           name,
-          email: result.user.email,
+          email: [result.user.email],
           uid: result.user.uid,
           pic: image,
-          users: [{userId: '', userName: ''}],
-          groupName: '',
         });
-      navigation.navigate('Home');
       setLoading(false);
+      navigation.navigate('Home');
     } catch (error) {
       setLoading(false);
       alert('something went wrong');

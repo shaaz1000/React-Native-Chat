@@ -4,30 +4,14 @@ import {GiftedChat, Bubble, InputToolbar} from 'react-native-gifted-chat';
 import firestore from '@react-native-firebase/firestore';
 export default function ChatScreen({user, route}) {
   const [messages, setMessages] = useState([]);
-  const {uid} = route.params;
-  const getAllMessages = async () => {
-    const docid = uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
-    const querySanp = await firestore()
-      .collection('chatrooms')
-      .doc(docid)
-      .collection('messages')
-      .orderBy('createdAt', 'desc')
-      .get();
-    const allmsg = querySanp.docs.map(docSanp => {
-      return {
-        ...docSanp.data(),
-        createdAt: docSanp.data().createdAt.toDate(),
-      };
-    });
-    setMessages(allmsg);
-  };
-  useEffect(() => {
-    // getAllMessages()
+  const {uid, isGroupChat} = route.params;
 
+  useEffect(() => {
     const docid = uid > user.uid ? user.uid + '-' + uid : uid + '-' + user.uid;
+
     const messageRef = firestore()
       .collection('chatrooms')
-      .doc(docid)
+      .doc(isGroupChat ? uid : docid)
       .collection('messages')
       .orderBy('createdAt', 'desc');
 
@@ -67,10 +51,12 @@ export default function ChatScreen({user, route}) {
 
     firestore()
       .collection('chatrooms')
-      .doc(docid)
+      .doc(isGroupChat ? uid : docid)
       .collection('messages')
       .add({...mymsg, createdAt: firestore.FieldValue.serverTimestamp()});
   };
+
+  console.log(user, 'user');
   return (
     <View style={{flex: 1, backgroundColor: '#f5f5f5'}}>
       <GiftedChat
@@ -78,6 +64,8 @@ export default function ChatScreen({user, route}) {
         onSend={text => onSend(text)}
         user={{
           _id: user.uid,
+          name: 'Friend 1',
+          // avatar: '',
         }}
         renderBubble={props => {
           return (
